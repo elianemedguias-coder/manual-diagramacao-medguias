@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Manual de Operações — Diagramação de Guia Médico Impresso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Mulish:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F8F6;
+    --paper-2:#E9F2EE;
+    --card:#FFFFFF;
+    --ink:#182620;
+    --ink-soft:#51655d;
+    --ink-faint:#8b9c95;
+    --line:#DCE8E2;
+    --green:#2E8365;
+    --green-dark:#1F5E48;
+    --green-light:#57C5AC;
+    --green-pale:#E5F4EE;
+    --red:#C31E24;
+    --red-dark:#921217;
+    --red-pale:#FBEAEA;
+    --radius:14px;
+    --shadow: 0 1px 0 rgba(24,38,32,0.04), 0 14px 28px -18px rgba(24,38,32,0.28);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Mulish', 'Segoe UI', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  h1,h2,h3,h4{font-family:'Fredoka', 'Mulish', sans-serif; letter-spacing:0.01em; margin:0; color:var(--ink); font-weight:600;}
+
+  /* ---------- Brand mark (signature element: diagonal two-tone panel, echoes ID badge / folder) ---------- */
+  .brandmark{display:inline-block; width:1.1em; height:1.1em; vertical-align:-0.2em; border-radius:5px; position:relative; overflow:hidden; background:var(--red); flex-shrink:0;}
+  .brandmark::after{content:""; position:absolute; inset:0; background:var(--green); clip-path:polygon(100% 0, 100% 100%, 35% 100%);}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    background:var(--card); color:var(--ink);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 20px;
+    border-bottom:1px solid var(--line);
+    box-shadow:0 2px 12px -8px rgba(24,38,32,0.25);
+  }
+  .topbar .brandline{display:flex; align-items:center; gap:12px;}
+  .topbar .brandmark{width:30px; height:30px; border-radius:8px;}
+  .topbar .title{font-family:'Fredoka', sans-serif; font-weight:600; font-size:1.1rem; letter-spacing:0.01em; color:var(--green-dark);}
+  .topbar .sub{font-family:'IBM Plex Mono'; font-size:0.66rem; color:var(--ink-faint); letter-spacing:0.04em;}
+  .menu-btn{
+    display:none; background:var(--green-pale); border:1px solid var(--line); color:var(--green-dark);
+    font-family:'Mulish'; font-weight:700; font-size:0.75rem; padding:8px 12px; cursor:pointer; border-radius:var(--radius);
+  }
+
+  /* ---------- Layout shell ---------- */
+  .shell{display:flex; max-width:1320px; margin:0 auto; align-items:flex-start;}
+  aside.sidebar{
+    width:280px; flex-shrink:0; position:sticky; top:47px;
+    height:calc(100vh - 47px); overflow-y:auto;
+    padding:22px 16px 60px 22px; border-right:1px solid var(--line);
+  }
+  main{flex:1; min-width:0; padding:34px 40px 100px;}
+
+  .search-wrap{position:relative; margin-bottom:22px;}
+  #search{
+    width:100%; padding:10px 12px 10px 34px; border:1.5px solid var(--line);
+    background:var(--card); font-family:'Mulish'; font-weight:600; font-size:0.85rem;
+    border-radius:999px; color:var(--ink);
+  }
+  #search:focus{outline:2px solid var(--green-light); outline-offset:1px; border-color:var(--green);}
+  .search-wrap::before{
+    content:"⌕"; position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    font-size:1.05rem; color:var(--green);
+  }
+  #searchCount{font-family:'Mulish'; font-weight:600; font-size:0.7rem; color:var(--ink-faint); margin:8px 6px 0;}
+
+  nav.toc{font-family:'Mulish'; font-size:0.82rem; font-weight:600;}
+  nav.toc .group-label{
+    color:var(--ink-faint); font-size:0.68rem; letter-spacing:0.08em; margin:20px 0 6px; text-transform:uppercase;
+    font-family:'IBM Plex Mono'; font-weight:500;
+  }
+  nav.toc .group-label:first-child{margin-top:0;}
+  nav.toc a{
+    display:flex; gap:9px; align-items:baseline; text-decoration:none; color:var(--ink-soft);
+    padding:7px 10px; border-radius:10px; line-height:1.35;
+  }
+  nav.toc a .num{color:var(--green); flex-shrink:0; font-family:'IBM Plex Mono'; font-weight:600; font-size:0.72rem;}
+  nav.toc a:hover{background:var(--green-pale); color:var(--green-dark);}
+  nav.toc a.active{background:var(--green); color:#fff;}
+  nav.toc a.active .num{color:#d9f2e8;}
+
+  /* ---------- Main content blocks ---------- */
+  .masthead{
+    border:1px solid var(--line); background:var(--card); padding:32px 34px; margin-bottom:34px;
+    position:relative; box-shadow:var(--shadow); border-radius:20px; overflow:hidden;
+  }
+  .masthead::before{
+    content:""; position:absolute; top:0; right:0; width:46%; height:110%;
+    background:linear-gradient(135deg, var(--green-light), var(--green));
+    clip-path:polygon(38% 0, 100% 0, 100% 100%, 8% 100%);
+    opacity:0.14;
+  }
+  .masthead .eyebrow{font-family:'IBM Plex Mono'; font-size:0.72rem; color:var(--red); letter-spacing:0.08em; margin-bottom:12px; display:flex; align-items:center; gap:8px; position:relative;}
+  .masthead h1{font-size:2.4rem; font-weight:600; line-height:1.05; position:relative;}
+  .masthead p.lead{font-family:'Mulish'; font-size:1.02rem; color:var(--ink-soft); max-width:640px; margin-top:14px; position:relative;}
+
+  .fase-block{margin-bottom:52px; scroll-margin-top:60px;}
+  .fase-head{display:flex; align-items:center; gap:16px; border-bottom:2px solid var(--green-pale); padding-bottom:12px; margin-bottom:18px;}
+  .fase-head .fnum{font-family:'Fredoka'; font-weight:600; font-size:2.1rem; color:var(--green); line-height:1; background:var(--green-pale); padding:4px 14px; border-radius:12px;}
+  .fase-head h2{font-size:1.4rem;}
+  .fase-desc{color:var(--ink-soft); font-size:0.95rem; max-width:760px; margin-bottom:20px;}
+
+  .subsection{
+    background:var(--card); border:1px solid var(--line); border-left:5px solid var(--green);
+    padding:18px 22px; margin-bottom:16px; border-radius:var(--radius);
+    scroll-margin-top:60px; box-shadow:var(--shadow);
+  }
+  .subsection.gold{border-left-color:var(--red);}
+  .subsection.magenta{border-left-color:var(--red);}
+  .subsection h3{font-size:1.08rem; margin-bottom:10px; display:flex; align-items:baseline; gap:8px; text-transform:none; font-weight:700; font-family:'Mulish'; color:var(--green-dark);}
+  .subsection h3 .tag{font-family:'IBM Plex Mono'; font-size:0.65rem; background:var(--red); color:#fff; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:0.04em; font-weight:600;}
+  .subsection ol, .subsection ul{margin:8px 0; padding-left:22px;}
+  .subsection li{margin-bottom:6px;}
+  .subsection p{margin:8px 0;}
+  .code{font-family:'IBM Plex Mono'; background:var(--paper-2); padding:1px 6px; border-radius:5px; font-size:0.88em; color:var(--green-dark); border:1px solid var(--line);}
+
+  .callout{
+    display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:12px 15px;
+    background:var(--green-pale); border:1px solid #cdeadd; border-radius:12px; font-size:0.9rem;
+  }
+  .callout.danger{background:var(--red-pale); border-color:#f0c3c5;}
+  .callout.info{background:var(--green-pale); border-color:#cdeadd;}
+  .callout .ic{font-family:'Fredoka'; font-weight:700; flex-shrink:0; color:var(--red);}
+  .callout.danger .ic{color:var(--red);}
+  .callout.info .ic{color:var(--green-dark);}
+
+  .hierarchy-list{list-style:none; margin:10px 0; padding:0; display:flex; flex-wrap:wrap; gap:8px;}
+  .hierarchy-list li{
+    font-family:'IBM Plex Mono'; font-size:0.78rem; background:var(--green-dark); color:#fff;
+    padding:6px 12px; border-radius:20px; display:flex; align-items:center; gap:6px;
+  }
+  .hierarchy-list li .rank{color:var(--green-light); font-weight:700;}
+  .hierarchy-list li::after{content:"→"; margin-left:6px; color:rgba(255,255,255,0.5);}
+  .hierarchy-list li:last-child::after{content:"";}
+
+  .screenshot-box{
+    margin-top:14px; border:2px dashed #b9d6c9; border-radius:var(--radius);
+    padding:22px; text-align:center; color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.78rem;
+    background:var(--green-pale);
+  }
+
+  /* ---------- Glossary ---------- */
+  .glossary-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:12px;}
+  .gterm{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);}
+  .gterm summary{
+    cursor:pointer; padding:13px 16px; font-family:'Fredoka'; font-weight:600; font-size:0.9rem;
+    list-style:none; display:flex; justify-content:space-between; align-items:center; color:var(--green-dark);
+  }
+  .gterm summary::-webkit-details-marker{display:none;}
+  .gterm summary::after{content:"+"; font-size:1.2rem; color:var(--green-light); font-family:'Mulish'; font-weight:800;}
+  .gterm[open] summary::after{content:"–";}
+  .gterm .gdef{padding:0 16px 15px; font-size:0.88rem; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:10px;}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:10px; box-shadow:var(--shadow);}
+  .faq-item summary{
+    cursor:pointer; padding:15px 18px; font-weight:700; list-style:none; display:flex; gap:10px; align-items:baseline; font-family:'Mulish';
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary .q-ic{font-family:'Fredoka'; color:#fff; background:var(--red); width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.72rem; flex-shrink:0;}
+  .faq-item .a{padding:0 18px 18px 46px; color:var(--ink-soft); font-size:0.94rem;}
+
+  /* ---------- Checklists ---------- */
+  .checklist{list-style:none; margin:0; padding:0;}
+  .checklist li{
+    display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid var(--line);
+    background:var(--card); border-radius:12px; margin-bottom:8px; cursor:pointer;
+  }
+  .checklist li input{margin-top:3px; width:17px; height:17px; accent-color:var(--green); flex-shrink:0;}
+  .checklist li span{font-size:0.94rem;}
+  .checklist li.checked{opacity:0.55;}
+  .checklist li.checked span{text-decoration:line-through;}
+  .progress-wrap{margin:14px 0 20px; height:9px; background:var(--paper-2); border-radius:20px; overflow:hidden; border:1px solid var(--line);}
+  .progress-bar{height:100%; background:linear-gradient(90deg, var(--green-light), var(--green)); width:0%; transition:width .25s ease;}
+  .progress-label{font-family:'IBM Plex Mono'; font-size:0.72rem; color:var(--ink-soft); margin-bottom:4px;}
+
+  /* ---------- Table ---------- */
+  table.margins{width:100%; border-collapse:separate; border-spacing:0; font-size:0.9rem; margin-top:8px; border-radius:12px; overflow:hidden; border:1px solid var(--line);}
+  table.margins th, table.margins td{border-bottom:1px solid var(--line); padding:10px 14px; text-align:left;}
+  table.margins th{background:var(--green-dark); color:#fff; font-family:'IBM Plex Mono'; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; border-bottom:none;}
+  table.margins td.val{font-family:'IBM Plex Mono'; color:var(--red); font-weight:700;}
+
+  mark{background:#fff3b0; color:var(--ink); padding:0 3px; border-radius:4px;}
+  .hidden{display:none !important;}
+  .no-results{padding:40px; text-align:center; color:var(--ink-faint); font-family:'IBM Plex Mono';}
+
+  footer{border-top:1px solid var(--line); margin-top:60px; padding-top:20px; color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.72rem;}
+
+  .backtotop{
+    position:fixed; bottom:22px; right:22px; background:var(--green); color:#fff;
+    width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    text-decoration:none; font-size:1.2rem; box-shadow:var(--shadow); z-index:30; border:2px solid #fff;
+  }
+
+  @media (max-width:900px){
+    .menu-btn{display:inline-block;}
+    aside.sidebar{
+      position:fixed; top:47px; left:0; height:calc(100vh - 47px); width:82%; max-width:320px;
+      background:var(--paper); z-index:39; transform:translateX(-100%); transition:transform .2s ease;
+      box-shadow: 8px 0 24px rgba(0,0,0,0.25);
+    }
+    aside.sidebar.open{transform:translateX(0);}
+    main{padding:24px 18px 90px;}
+    .masthead h1{font-size:1.8rem;}
+    .fase-head .fnum{font-size:1.8rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandline">
+    <span class="brandmark"></span>
+    <div>
+      <div class="title">Manual de Operações</div>
+      <div class="sub">DIAGRAMAÇÃO · GUIA MÉDICO IMPRESSO · MEDGUIAS</div>
+    </div>
+  </div>
+  <button class="menu-btn" id="menuBtn">MENU ☰</button>
+</div>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Buscar no manual…" autocomplete="off">
+    </div>
+    <div id="searchCount"></div>
+
+    <nav class="toc" id="toc">
+      <div class="group-label">Início</div>
+      <a href="#intro"><span class="num">·</span> Sobre este manual</a>
+
+      <div class="group-label">Produção</div>
+      <a href="#fase0"><span class="num">00</span> Estruturação de pastas</a>
+      <a href="#fase1"><span class="num">01</span> Extração e gabarito</a>
+      <a href="#fase2"><span class="num">02</span> Diagramação do miolo (PB)</a>
+      <a href="#fase3"><span class="num">03</span> Caderno colorido</a>
+      <a href="#fase4"><span class="num">04</span> Capa e hotstamping</a>
+      <a href="#fase5"><span class="num">05</span> Paginação e mestras</a>
+      <a href="#fase6"><span class="num">06</span> Gestão de fluxo (Trello)</a>
+      <a href="#fase7"><span class="num">07</span> Calhais, cabeçalhos e sumário</a>
+      <a href="#fase8"><span class="num">08</span> Checklist técnico pré-prova</a>
+      <a href="#fase9"><span class="num">09</span> Prova física</a>
+      <a href="#fase10"><span class="num">10</span> Exportação e fechamento</a>
+      <a href="#fase11"><span class="num">11</span> Pacote final p/ gráfica</a>
+
+      <div class="group-label">Consulta rápida</div>
+      <a href="#glossario"><span class="num">✎</span> Glossário</a>
+      <a href="#faq"><span class="num">?</span> Perguntas frequentes</a>
+      <a href="#checklist-ferias"><span class="num">✓</span> Checklist de saída</a>
+    </nav>
+  </aside>
+
+  <main id="main">
+
+    <section class="masthead" id="intro">
+      <div class="eyebrow">
+        <span class="brandmark" style="width:0.9em;height:0.9em;"></span>
+        GUIA DE COBERTURA DE FÉRIAS · MEDGUIAS
+      </div>
+      <h1>Produção e diagramação<br>do guia médico impresso</h1>
+      <p class="lead">Este manual reúne, passo a passo, todo o fluxo de produção de um guia médico impresso — da estruturação de pastas até o envio final para a gráfica. Foi feito para que quem assumir a função durante um período de férias consiga trabalhar com autonomia e tirar dúvidas em tempo real, sem depender de mensagens.</p>
+      <p class="lead" style="margin-top:8px;"><strong>Como usar:</strong> use o menu à esquerda ou a busca para pular direto para uma etapa. As caixas tracejadas marcam onde você pode inserir prints de tela do InDesign para reforçar o passo a passo. O Glossário e o FAQ ficam sempre disponíveis para consulta rápida.</p>
+    </section>
+
+    <!-- FASE 0 -->
+    <section class="fase-block" id="fase0">
+      <div class="fase-head"><span class="fnum">00</span><h2>Estruturação de pastas <span class="mono" style="font-size:0.9rem; color:var(--ink-faint); text-transform:none;">— setup inicial</span></h2></div>
+      <p class="fase-desc">Antes de iniciar a extração de dados, é obrigatório montar o ambiente de trabalho. Toda edição começa por aqui.</p>
+
+      <div class="subsection">
+        <h3>Criar a pasta <span class="code">_IMPRESSO</span> <span class="tag">obrigatório</span></h3>
+        <p>Dentro da pasta do estado (ex.: <span class="code">BA - 2026</span>), crie a pasta <span class="code">_IMPRESSO</span>. Dentro dela, crie e organize as seguintes subpastas:</p>
+        <ul>
+          <li><strong>ASSOCIAÇÃO</strong> — arte da associação de medicina do estado (geralmente enviada pronta).</li>
+          <li><strong>BONECO</strong> — arquivo principal do InDesign que receberá as artes das especialidades.</li>
+          <li><strong>BONIFICAÇÃO</strong> — lista/arquivos dos clientes bonificados. <em>Atenção:</em> verifique no grupo de WhatsApp <span class="code">fechamento guia impresso</span> se há bonificações; a edição anterior pode servir de pista sobre clientes recorrentes.</li>
+          <li><strong>CAPA</strong> — arquivos de montagem da capa, lombada (dorso), hotstamping e arquivos de fundo (PSD/AI).</li>
+          <li><strong>COLORIDO</strong> — arquivo de InDesign das artes coloridas.</li>
+          <li><strong>EDITORIAL</strong> — arquivo do editorial (geralmente pronto ou baseado no anterior).</li>
+          <li><strong>SUMÁRIO</strong> — arquivo em Illustrator. Salve um PDF deste arquivo para inserir no InDesign do "BONECO".</li>
+        </ul>
+        <div class="callout info"><span class="ic">i</span> Salve também a planilha de dados (Excel) extraída na Fase 1 dentro desta estrutura, e copie o arquivo de capas de especialidades (.cdr e .pdf) — o layout deve seguir exatamente o padrão do último estado finalizado.</div>
+        <div class="screenshot-box">📷 Espaço para print: estrutura de pastas padrão <span class="code">_IMPRESSO</span></div>
+      </div>
+    </section>
+
+    <!-- FASE 1 -->
+    <section class="fase-block" id="fase1">
+      <div class="fase-head"><span class="fnum">01</span><h2>Extração de dados e gabarito</h2></div>
+      <p class="fase-desc">Fase que consolida a base de clientes ativos e cruza as informações contratuais. A precisão aqui é vital para evitar falhas na diagramação.</p>
+
+      <div class="subsection">
+        <h3>1.1 — Extração da base de dados</h3>
+        <ol>
+          <li>Acesse o portal administrativo (Admin) e filtre por <strong>Estado</strong> e <strong>Status: Ativo</strong>.</li>
+          <li>Copie a lista gerada e cole em um Bloco de Notas simples, para remover formatações indesejadas.</li>
+          <li>Acesse a <a href="https://share.gemini.google/hax6OMdznmjn" target="_blank" rel="noopener">conversa do Gemini dedicada à limpeza de dados</a> e cole a lista para extrair os dados úteis.</li>
+          <li>Copie os dados limpos para uma planilha Excel e crie obrigatoriamente três colunas: <span class="code">CTO</span>, <span class="code">FIGURAÇÃO</span> e <span class="code">DATA DA VENDA</span>.</li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h3>1.2 — Conferência de contratos e criação do gabarito</h3>
+        <ol>
+          <li>Acesse a pasta correspondente à edição (ex.: <span class="code">AL - 2026</span>) e abra os contratos individualmente.</li>
+          <li>Compare cada nome da lista do Excel com os arquivos de contrato presentes na pasta.</li>
+          <li>Preencha as colunas <span class="code">CTO</span>, <span class="code">FIGURAÇÃO</span> e <span class="code">DATA DA VENDA</span> para cada cliente.</li>
+        </ol>
+        <div class="callout"><span class="ic">★</span> Esta planilha preenchida é o seu <strong>Gabarito Oficial</strong> para toda a diagramação. Mantenha sempre uma cópia de backup em pasta de rede segura, nomeada com a data da última atualização.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>1.3 — Preparação para a diagramação (o "boneco")</h3>
+        <ol>
+          <li>Use as informações de <span class="code">FIGURAÇÃO</span> para determinar o espaço necessário de cada cliente.</li>
+          <li>Desenhe os retângulos de marcação no arquivo InDesign (pasta <span class="code">BONECO</span>) conforme os tamanhos contratados.</li>
+          <li>Este desenho prévio serve como mapa para o fluxo de inserção de conteúdo, garantindo que nenhum contrato fique de fora.</li>
+        </ol>
+      </div>
+
+      <div class="subsection magenta">
+        <h3>1.4 — Validação final (Lista Unificada) <span class="tag">fim de campanha</span></h3>
+        <ol>
+          <li>Ao final da campanha, o setor de Editoração envia uma <strong>Lista Unificada</strong> de contratos.</li>
+          <li>Confira se todos os clientes da lista unificada estão no seu guia/boneco.</li>
+          <li>Se houver qualquer divergência (especialmente na figuração contratada), entre em contato imediato com a Editoração antes de prosseguir.</li>
+        </ol>
+        <div class="callout danger"><span class="ic">!</span> Nunca resolva uma divergência "por conta própria" — a Editoração é sempre a fonte de verdade final.</div>
+      </div>
+    </section>
+
+    <!-- FASE 2 -->
+    <section class="fase-block" id="fase2">
+      <div class="fase-head"><span class="fnum">02</span><h2>Diagramação do miolo (Preto e Branco)</h2></div>
+      <p class="fase-desc">Transforma os dados da planilha no layout final. Siga rigorosamente a ordem abaixo para garantir a padronização.</p>
+
+      <div class="subsection">
+        <h3>2.1 — Tratamento de gratuidades <span class="tag">antes dos pagantes</span></h3>
+        <p>Gratuidades são geralmente clientes associados que ganham inserção de texto com nome, registro, endereço e telefone.</p>
+        <ol>
+          <li><strong>Consulta de referência:</strong> abra o InDesign da campanha anterior do mesmo estado para identificar as gratuidades anteriores.</li>
+          <li><strong>Validação obrigatória:</strong> confira no grupo de WhatsApp "fechamento guia impresso" a lista vigente — confirme se ela permanece a mesma ou se há atualização.</li>
+          <li><strong>Regra de inserção:</strong> gratuidades entram a partir do módulo <span class="code">8CL</span>.</li>
+          <li><strong>Ordenação:</strong> seguem a mesma ordem alfabética dos demais clientes.</li>
+        </ol>
+        <div class="callout danger"><span class="ic">!</span> Nunca insira uma gratuidade antes de um espaço de <span class="code">2QCOL</span>.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>2.2 — Preparação da diagramação (filtros)</h3>
+        <ul>
+          <li>Filtre a planilha por <strong>Especialidade</strong>, em ordem alfabética.</li>
+          <li>Filtre pelas figurações em padrão <strong>Preto e Branco (PB)</strong>: 1/2 pág, 1/4 pág, 2MCOL, 2QCOL, 8CL, 6CL, 4CL e 3CL.</li>
+          <li><strong>Prioridade geográfica:</strong> se o estado tiver mais de uma cidade, inicie sempre pela capital e depois siga para as demais.</li>
+          <li>Se não houver figurações compradas para uma especialidade, deixe o espaço limpo — nunca force a criação de espaços sem contrato.</li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <h3>2.3 — Regras de ouro para inserção</h3>
+        <p><strong>Hierarquia de tamanho</strong> — a inserção deve seguir sempre esta ordem de dimensão:</p>
+        <ul class="hierarchy-list">
+          <li><span class="rank">1</span> 1/2 pág PB</li><li><span class="rank">2</span> 1/4 pág PB</li><li><span class="rank">3</span> 2MCOL</li><li><span class="rank">4</span> 2QCOL</li><li><span class="rank">5</span> 8CL</li><li><span class="rank">6</span> 6CL</li><li><span class="rank">7</span> 4CL</li><li><span class="rank">8</span> 3CL</li>
+        </ul>
+        <p><strong>Critério de ordenação alfabética</strong> — dentro de cada bloco de figuração, os clientes entram em ordem alfabética.</p>
+        <div class="callout"><span class="ic">★</span> Use sempre o nome que consta no <strong>título do anúncio online</strong> para ordenar — nunca o nome jurídico do contrato. Exemplo: contrato em nome de "Maria José", mas o anúncio online é "José" → ordene pela letra <strong>J</strong>.</div>
+        <div class="screenshot-box">📷 Espaço para print: hierarquia de figurações aplicada no InDesign</div>
+      </div>
+    </section>
+
+    <!-- FASE 3 -->
+    <section class="fase-block" id="fase3">
+      <div class="fase-head"><span class="fnum">03</span><h2>Diagramação do caderno colorido</h2></div>
+      <p class="fase-desc">Diferente do miolo PB, o caderno colorido segue ordenação por cronologia e posicionamento estratégico — não por ordem alfabética.</p>
+
+      <div class="subsection">
+        <h3>3.1 — Ordem de inserção no caderno colorido</h3>
+        <p>Ao abrir o InDesign de "Coloridos", a sequência de montagem deve seguir rigorosamente esta ordem:</p>
+        <ul class="hierarchy-list">
+          <li><span class="rank">1</span> Editorial (1 pág)</li><li><span class="rank">2</span> Associação (dupla espelhada)</li><li><span class="rank">3</span> Figurações espelhadas</li><li><span class="rank">4</span> Demais páginas coloridas</li>
+        </ul>
+        <ul>
+          <li><strong>Figurações espelhadas:</strong> insira primeiro as compradas, depois as bonificadas espelhadas. Critério de ordenação: <strong>Cidade</strong> e, dentro da cidade, <strong>Data da Venda</strong> (do contrato mais antigo para o mais recente).</li>
+          <li><strong>Demais páginas coloridas:</strong> páginas compradas → 1/2 página colorida → 1/4 de página colorida.</li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <h3>3.2 — Regras de ordenação geral</h3>
+        <p>Aqui <strong>não se aplica ordem alfabética</strong>. A regra mestra é a <strong>Data da Venda</strong>: contratos mais antigos têm prioridade de inserção.</p>
+      </div>
+
+      <div class="subsection gold">
+        <h3>3.3 — Validação e ajustes estratégicos</h3>
+        <ul>
+          <li><strong>Monitoramento de vendas:</strong> mantenha contato constante com a <strong>Raíza</strong> para verificar a data final de vendas do estado. Todo contrato novo deve ser imediatamente somado à planilha e ao guia.</li>
+          <li><strong>Posicionamento especial:</strong> alguns vendedores negociam posições específicas com os médicos (ex.: "lado direito", "lado esquerdo" ou "ao lado de determinado cliente"). Verifique sempre se há observações sobre essas preferências antes de finalizar a seção.</li>
+        </ul>
+        <div class="callout danger"><span class="ic">!</span> Ignorar uma posição negociada é um dos erros mais sensíveis do processo — sempre confira as observações do contrato antes de fechar essa parte.</div>
+      </div>
+    </section>
+
+    <!-- FASE 4 -->
+    <section class="fase-block" id="fase4">
+      <div class="fase-head"><span class="fnum">04</span><h2>Capa e hotstamping</h2></div>
+      <p class="fase-desc">Garante que a identidade visual da capa e o acabamento especial (hotstamping) estejam perfeitamente alinhados para a gráfica.</p>
+
+      <div class="subsection gold">
+        <h3>4.1 — Preparação do hotstamping <span class="tag">acabamento especial</span></h3>
+        <p>O hotstamping é um arquivo separado em PDF que contém a aplicação metalizada da logo da Medguias.</p>
+        <ol>
+          <li><strong>Reaproveitamento:</strong> se a edição não for a "Edição 5", localize o arquivo na pasta da edição anterior.</li>
+          <li><strong>Configuração:</strong> copie o arquivo para a pasta da edição atual e renomeie.</li>
+          <li><strong>Conferência de precisão (crucial):</strong> abra o arquivo do hotstamping e o da capa final. Use <span class="code">Ctrl+C</span> (copiar a logo da capa) e <span class="code">Ctrl+F</span> (colar no mesmo lugar) sobre a logo do hotstamping.</li>
+        </ol>
+        <div class="callout danger"><span class="ic">!</span> Verifique se as duas logos ficam perfeitamente sobrepostas (mesma posição e escala). Qualquer desalinhamento deve ser ajustado imediatamente.</div>
+        <div class="screenshot-box">📷 Espaço para print: conferência Ctrl+C / Ctrl+F da logo sobre o hotstamping</div>
+      </div>
+
+      <div class="subsection">
+        <h3>4.2 — Preparação do arquivo para a gráfica (capa gráfica)</h3>
+        <p>O arquivo "capa gráfica" é o documento mestre com os elementos obrigatórios: retângulo branco, logo da associação (se aplicável), fotos, rodapé e QR Code.</p>
+        <ol>
+          <li>Monte no InDesign próprio para capas.</li>
+          <li>Insira o PDF da "Capa Gráfica" junto com as artes da 2ª, 3ª e 4ª capa.</li>
+          <li>O PDF final enviado para a gráfica deve conter as <strong>4 páginas de capa ordenadas</strong> em um único arquivo.</li>
+        </ol>
+        <div class="callout danger"><span class="ic">!</span> Este é o item principal enviado à gráfica no fechamento. Confirme sangria, cores e qualidade de imagem das 4 capas antes da exportação definitiva.</div>
+      </div>
+    </section>
+
+    <!-- FASE 5 -->
+    <section class="fase-block" id="fase5">
+      <div class="fase-head"><span class="fnum">05</span><h2>Paginação e estrutura (Preto e Verde)</h2></div>
+      <p class="fase-desc">Garante que a numeração de páginas siga o fluxo contínuo em relação ao caderno colorido, e que as páginas-mestras estejam corretas.</p>
+
+      <div class="subsection">
+        <h3>5.1 — Sincronização de paginação</h3>
+        <ol>
+          <li>Após inserir todas as artes e figurações, verifique o número total de páginas do caderno colorido.</li>
+          <li>No InDesign (PB/Verde), abra o painel <strong>Pages</strong>, clique com o botão direito na primeira página e selecione <strong>Numbering & Section Options</strong>.</li>
+          <li>Em <strong>Start Page Numbering at</strong>, insira o número subsequente ao fim do caderno colorido. Ex.: se o colorido terminou em 50, inicie o PB em 51.</li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h3>5.2 — Aplicação de estilos e mestras</h3>
+        <ul>
+          <li><strong>Estilo "None"</strong> — páginas do Sumário (geralmente 7 a 8 páginas), páginas com títulos de especialidades, e páginas de "calhais" (propaganda institucional) que ocupam a página inteira.</li>
+          <li><strong>Páginas com figurações</strong> — Estilo <span class="code">C</span> para o lado esquerdo, Estilo <span class="code">B</span> para o lado direito.</li>
+          <li><strong>Capas de especialidades</strong> — sempre posicionadas no lado direito.</li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <h3>5.3 — Regras de fluxo e verificação</h3>
+        <ol>
+          <li>O guia deve obrigatoriamente <strong>iniciar em página do lado direito</strong> e <strong>terminar em página do lado esquerdo</strong>.</li>
+          <li>Use a opção <strong>Facing Pages</strong> no painel Properties para conferir as páginas em duplas.</li>
+          <li>Esta etapa pode ser feita durante a montagem ou como conferência final antes da gráfica — o que facilitar mais o seu fluxo.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FASE 6 -->
+    <section class="fase-block" id="fase6">
+      <div class="fase-head"><span class="fnum">06</span><h2>Gestão de fluxo (Trello e planilha)</h2></div>
+      <p class="fase-desc">Controle contínuo, feito em paralelo às fases de diagramação — não é uma etapa isolada, mas um hábito a manter durante todo o processo.</p>
+      <div class="subsection">
+        <ul>
+          <li><strong>Monitoramento:</strong> acompanhe a lista "Em Revisão" no Trello.</li>
+          <li><strong>Inserção:</strong> à medida que o setor de Layout finaliza as artes, mova-as para o guia e aplique a etiqueta <span class="code">Inserido no Guia</span> no Trello.</li>
+          <li><strong>Controle:</strong> atualize a planilha de controle de contratos, sinalizando os já inseridos.</li>
+        </ul>
+        <div class="callout"><span class="ic">★</span> Garanta que todas as artes estejam inseridas no arquivo principal antes da etapa final — a inserção de calhais é demorada e deve ser feita com o conteúdo base já completo.</div>
+      </div>
+    </section>
+
+    <!-- FASE 7 -->
+    <section class="fase-block" id="fase7">
+      <div class="fase-head"><span class="fnum">07</span><h2>Calhais, cabeçalhos e sumário</h2></div>
+      <p class="fase-desc">Finalização de conteúdo — feita depois que todas as artes contratadas já estão inseridas.</p>
+      <div class="subsection">
+        <ol>
+          <li><strong>Calhais:</strong> após o encerramento das vendas, preencha os espaços em branco com os calhais institucionais (propaganda da própria empresa).</li>
+          <li><strong>Cabeçalhos:</strong> insira os cabeçalhos de especialidades nas respectivas seções.</li>
+          <li><strong>Sumário:</strong> após receber do setor de diagramação a lista em ordem alfabética, insira-a no sumário e vincule os números de página correspondentes.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FASE 8 -->
+    <section class="fase-block" id="fase8">
+      <div class="fase-head"><span class="fnum">08</span><h2>Checklist técnico pré-prova</h2></div>
+      <p class="fase-desc">Execução obrigatória antes de imprimir a prova física e de exportar os arquivos finais.</p>
+      <div class="subsection magenta">
+        <h3>Checklist de integridade do arquivo</h3>
+        <ul>
+          <li><strong>Conversão em curvas:</strong> confira se todos os textos de todos os arquivos (Capas, Colorido e Miolo PB) estão convertidos em curvas (<span class="code">Create Outlines / Ctrl+Shift+O</span>). Isso evita problemas de fontes faltando na gráfica.</li>
+          <li><strong>QR Codes:</strong> valide se os QR Codes das Capas e dos Cadernos Coloridos estão corretos e funcionais — teste com um celular antes de seguir.</li>
+          <li><strong>Padrão de cores (PB e Verde):</strong> certifique-se de que os elementos do miolo Preto e Verde estejam rigorosamente dentro do padrão — <strong>Escala de Cinza</strong> para os elementos em preto e <strong>Pantone 34C</strong> para os elementos em verde.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FASE 9 -->
+    <section class="fase-block" id="fase9">
+      <div class="fase-head"><span class="fnum">09</span><h2>Prova física</h2></div>
+      <p class="fase-desc">A conferência digital nem sempre revela todos os detalhes — por isso a prova impressa é obrigatória.</p>
+      <div class="subsection">
+        <ol>
+          <li><strong>Impressão de prova:</strong> imprima uma prova do guia na impressora interna.</li>
+          <li><strong>Revisão do setor de Editoração:</strong> entregue o material físico para conferência.</li>
+          <li>O setor verifica <strong>erros ortográficos</strong> (revisão de texto em todas as páginas) e <strong>posicionamento</strong> (alinhamento e margens de segurança).</li>
+          <li><strong>Ajustes:</strong> se houver erros, corrija no InDesign, gere um novo PDF e, se necessário, imprima nova prova para aprovação final.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FASE 10 -->
+    <section class="fase-block" id="fase10">
+      <div class="fase-head"><span class="fnum">10</span><h2>Exportação e fechamento</h2></div>
+      <p class="fase-desc">Só ocorre depois da aprovação da prova física. Preste atenção especial às margens de sangria de cada peça.</p>
+      <div class="subsection">
+        <h3>Margens de sangria (bleed) por peça</h3>
+        <table class="margins">
+          <thead><tr><th>Peça</th><th>Margem</th></tr></thead>
+          <tbody>
+            <tr><td>Capas</td><td class="val">20 mm</td></tr>
+            <tr><td>Caderno Colorido</td><td class="val">10 mm</td></tr>
+            <tr><td>Caderno Preto e Verde</td><td class="val">10 mm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="subsection gold">
+        <h3>Lombada (dorso)</h3>
+        <p>Abra o arquivo da lombada, atualize o <strong>ano da edição</strong> e exporte como arquivo separado — <strong>não entra dentro do guia</strong>.</p>
+      </div>
+      <div class="subsection gold">
+        <h3>Hotstamping — aprovação e envio</h3>
+        <p>A aprovação final do hotstamping é feita pela <strong>Carol King</strong>. Após a liberação dela, envie o PDF pelo WhatsApp da gráfica.</p>
+      </div>
+    </section>
+
+    <!-- FASE 11 -->
+    <section class="fase-block" id="fase11">
+      <div class="fase-head"><span class="fnum">11</span><h2>Pacote final para a gráfica</h2></div>
+      <p class="fase-desc">Organize a pasta final de envio com todos os arquivos obrigatórios abaixo antes de considerar a edição fechada.</p>
+      <div class="subsection">
+        <ul class="checklist" id="pacoteFinal">
+          <li><input type="checkbox" data-key="pf1"><span>_COLORIDO_GUIA.pdf</span></li>
+          <li><input type="checkbox" data-key="pf2"><span>Boneco Impresso.pdf</span></li>
+          <li><input type="checkbox" data-key="pf3"><span>Dorso_Gráfica.pdf</span></li>
+          <li><input type="checkbox" data-key="pf4"><span>GRÁFICA_CAPA MONTADA.pdf</span></li>
+          <li><input type="checkbox" data-key="pf5"><span>HOTSTAMPING CAPA.pdf <em>(incluir mesmo que enviado previamente)</em></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section class="fase-block" id="glossario">
+      <div class="fase-head"><span class="fnum mono" style="font-size:1.8rem;">✎</span><h2>Glossário</h2></div>
+      <p class="fase-desc">Termos técnicos usados no dia a dia da produção. Clique em um termo para ver a definição.</p>
+      <div class="glossary-grid" id="glossaryGrid">
+        <details class="gterm"><summary>BONECO<span></span></summary><div class="gdef">Arquivo principal do InDesign que recebe as artes das especialidades e serve de mapa/estrutura para toda a diagramação do miolo.</div></details>
+        <details class="gterm"><summary>GABARITO<span></span></summary><div class="gdef">Planilha Excel oficial, preenchida com CTO, Figuração e Data da Venda de cada cliente, que guia toda a montagem da edição.</div></details>
+        <details class="gterm"><summary>CTO<span></span></summary><div class="gdef">Coluna de controle contratual preenchida na conferência de cada contrato (Fase 1.2), usada no Gabarito.</div></details>
+        <details class="gterm"><summary>FIGURAÇÃO<span></span></summary><div class="gdef">Tamanho/formato do anúncio contratado pelo cliente (ex.: 1/2 pág, 8CL, 2QCOL). Define o espaço a ser reservado na diagramação.</div></details>
+        <details class="gterm"><summary>8CL / 6CL / 4CL / 3CL<span></span></summary><div class="gdef">Módulos de figuração em coluna, do maior (8CL) ao menor (3CL), usados no miolo Preto e Branco.</div></details>
+        <details class="gterm"><summary>2QCOL / 2MCOL<span></span></summary><div class="gdef">Formatos intermediários de figuração no miolo PB, posicionados na hierarquia entre "1/4 página" e os módulos "CL".</div></details>
+        <details class="gterm"><summary>Gratuidade<span></span></summary><div class="gdef">Inserção sem custo (nome, registro, endereço e telefone) concedida geralmente a médicos associados. Entra a partir do módulo 8CL.</div></details>
+        <details class="gterm"><summary>Figuração espelhada<span></span></summary><div class="gdef">Anúncio posicionado em página dupla espelhada no caderno colorido, ordenado por cidade e depois por data da venda.</div></details>
+        <details class="gterm"><summary>Calhau / Calhais<span></span></summary><div class="gdef">Propaganda institucional da própria empresa, usada para preencher espaços em branco após o encerramento das vendas.</div></details>
+        <details class="gterm"><summary>Hotstamping<span></span></summary><div class="gdef">Acabamento especial metalizado aplicado sobre a logo da capa. Arquivo em PDF separado, aprovado por Carol King antes do envio à gráfica.</div></details>
+        <details class="gterm"><summary>Sangria (bleed)<span></span></summary><div class="gdef">Margem extra além do corte final, necessária para a impressão sem falhas de borda. Varia por peça: 20mm nas capas, 10mm nos cadernos.</div></details>
+        <details class="gterm"><summary>Lombada (dorso)<span></span></summary><div class="gdef">Parte da capa que cobre a "espinha" da revista. Exportada como arquivo separado, não faz parte do arquivo do guia.</div></details>
+        <details class="gterm"><summary>Estilo B / Estilo C<span></span></summary><div class="gdef">Páginas-mestras do InDesign aplicadas às páginas com figurações: Estilo C para o lado esquerdo, Estilo B para o lado direito.</div></details>
+        <details class="gterm"><summary>Facing Pages<span></span></summary><div class="gdef">Modo de visualização do InDesign que mostra as páginas em duplas, usado para conferir o fluxo de páginas esquerda/direita.</div></details>
+        <details class="gterm"><summary>Curvas (Create Outlines)<span></span></summary><div class="gdef">Conversão de texto editável em vetor (Ctrl+Shift+O), obrigatória antes da exportação final para evitar problemas de fonte na gráfica.</div></details>
+        <details class="gterm"><summary>Pantone 34C<span></span></summary><div class="gdef">Cor pantone padrão usada para os elementos verdes do miolo "Preto e Verde".</div></details>
+        <details class="gterm"><summary>Editoração<span></span></summary><div class="gdef">Setor responsável pela revisão ortográfica, validação da Lista Unificada e aprovação da prova física.</div></details>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="fase-block" id="faq">
+      <div class="fase-head"><span class="fnum mono" style="font-size:1.8rem;">?</span><h2>Perguntas frequentes</h2></div>
+      <p class="fase-desc">Dúvidas comuns durante a produção — clique para expandir.</p>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Minha planilha diverge da Lista Unificada enviada pela Editoração. O que faço?</summary><div class="a">Nunca resolva por conta própria. Entre em contato imediato com o setor de Editoração para validar a informação correta antes de continuar a diagramação (ver Fase 1.4).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Onde exatamente entram as gratuidades no miolo?</summary><div class="a">A partir do módulo 8CL, seguindo a ordem alfabética normal dos demais clientes. Nunca insira uma gratuidade antes de um espaço de 2QCOL (Fase 2.1).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Como ordeno os clientes dentro de cada figuração no miolo PB?</summary><div class="a">Em ordem alfabética, usando o nome que consta no título do anúncio online — não o nome jurídico do contrato (Fase 2.3).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> E no caderno colorido, a ordem também é alfabética?</summary><div class="a">Não. No colorido não se aplica ordem alfabética — a regra mestra é a Data da Venda, do contrato mais antigo para o mais recente (Fase 3.2).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Um médico pediu para ficar "do lado direito" ou "ao lado de outro cliente". Preciso respeitar isso?</summary><div class="a">Sim. Verifique sempre as observações do contrato antes de finalizar a seção — negociações de posicionamento específico são comuns e devem ser respeitadas (Fase 3.3).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Como confiro se o hotstamping está corretamente posicionado?</summary><div class="a">Abra o arquivo do hotstamping e o da capa final, copie a logo da capa (Ctrl+C) e cole no mesmo lugar (Ctrl+F) sobre a logo do hotstamping. As duas devem ficar perfeitamente sobrepostas em posição e escala (Fase 4.1).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Quem aprova o arquivo de hotstamping antes do envio à gráfica?</summary><div class="a">A aprovação é feita pela Carol King. Só depois da liberação dela o PDF deve ser enviado pelo WhatsApp da gráfica (Fase 10).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Onde deve começar e terminar a paginação do miolo?</summary><div class="a">O guia deve obrigatoriamente iniciar em uma página do lado direito e terminar em uma página do lado esquerdo. Use "Facing Pages" para conferir (Fase 5.3).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Quais são as margens de sangria corretas para exportação?</summary><div class="a">Capas: 20mm. Caderno Colorido: 10mm. Caderno Preto e Verde: 10mm. A lombada é exportada separadamente, sem entrar no arquivo do guia (Fase 10).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> O que preciso conferir tecnicamente antes de imprimir a prova física?</summary><div class="a">Todos os textos convertidos em curvas (Ctrl+Shift+O), QR Codes testados com celular, e cores do miolo dentro do padrão (Escala de Cinza + Pantone 34C) (Fase 8).</div></details>
+
+      <details class="faq-item"><summary><span class="q-ic">Q</span> Quais arquivos compõem o pacote final enviado à gráfica?</summary><div class="a">_COLORIDO_GUIA.pdf, Boneco Impresso.pdf, Dorso_Gráfica.pdf, GRÁFICA_CAPA MONTADA.pdf e HOTSTAMPING CAPA.pdf — este último deve ser incluído mesmo que já tenha sido enviado antes (Fase 11).</div></details>
+    </section>
+
+    <!-- CHECKLIST DE SAÍDA -->
+    <section class="fase-block" id="checklist-ferias">
+      <div class="fase-head"><span class="fnum mono" style="font-size:1.8rem;">✓</span><h2>Checklist de saída de férias</h2></div>
+      <p class="fase-desc">Confira estes pontos antes de considerar a edição pronta para seguir sem supervisão. O progresso fica salvo neste navegador.</p>
+      <div class="progress-label" id="progressLabel">0 de 5 concluídos</div>
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      <ul class="checklist" id="ferias">
+        <li><input type="checkbox" data-key="f1"><span>As pastas estão organizadas conforme o padrão <span class="code">_IMPRESSO</span>?</span></li>
+        <li><input type="checkbox" data-key="f2"><span>O Gabarito no Excel está atualizado com as figurações corretas?</span></li>
+        <li><input type="checkbox" data-key="f3"><span>O Hotstamping foi conferido com Ctrl+C / Ctrl+F sobre a capa?</span></li>
+        <li><input type="checkbox" data-key="f4"><span>A paginação foi validada (início em página ímpar / término em página par)?</span></li>
+        <li><input type="checkbox" data-key="f5"><span>A prova física foi assinada/aprovada pelo setor de Editoração?</span></li>
+      </ul>
+    </section>
+
+    <footer>
+      Manual interativo gerado a partir do processo interno de diagramação · guarde este arquivo em local acessível durante o período de cobertura.
+    </footer>
+  </main>
+</div>
+
+<a href="#intro" class="backtotop" title="Voltar ao topo">↑</a>
+
+<script>
+// ---------- Mobile menu ----------
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+document.querySelectorAll('nav.toc a').forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+
+// ---------- Scroll spy ----------
+const tocLinks = Array.from(document.querySelectorAll('nav.toc a'));
+const targets = tocLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const id = '#' + entry.target.id;
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+targets.forEach(t => spy.observe(t));
+
+// ---------- Search ----------
+const searchInput = document.getElementById('search');
+const searchCount = document.getElementById('searchCount');
+const searchableBlocks = Array.from(document.querySelectorAll('main .subsection, main .fase-block#glossario .gterm, main .fase-block#faq .faq-item'));
+let mainEl = document.getElementById('main');
+
+function clearHighlights(el){
+  el.querySelectorAll('mark').forEach(m => {
+    const parent = m.parentNode;
+    parent.replaceChild(document.createTextNode(m.textContent), m);
+    parent.normalize();
+  });
+}
+function highlight(el, term){
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  let n;
+  while(n = walker.nextNode()){ if(n.parentNode.tagName !== 'SCRIPT') nodes.push(n); }
+  const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'ig');
+  nodes.forEach(node => {
+    if(re.test(node.textContent)){
+      const span = document.createElement('span');
+      span.innerHTML = node.textContent.replace(re, '<mark>$1</mark>');
+      node.parentNode.replaceChild(span, node);
+    }
+  });
+}
+
+searchInput.addEventListener('input', () => {
+  const term = searchInput.value.trim();
+  searchableBlocks.forEach(b => { clearHighlights(b); b.classList.remove('hidden'); });
+  document.querySelectorAll('.fase-block').forEach(fb => fb.classList.remove('hidden'));
+
+  if(!term){ searchCount.textContent = ''; return; }
+
+  let matches = 0;
+  searchableBlocks.forEach(block => {
+    const text = block.textContent.toLowerCase();
+    if(text.includes(term.toLowerCase())){
+      matches++;
+      highlight(block, term);
+    } else {
+      block.classList.add('hidden');
+    }
+  });
+
+  // Hide fase-blocks whose subsections are all hidden (but keep header context blocks like intro)
+  document.querySelectorAll('.fase-block').forEach(fb => {
+    const blocks = fb.querySelectorAll('.subsection, .gterm, .faq-item');
+    if(blocks.length === 0) return; // masthead etc, always show
+    const allHidden = Array.from(blocks).every(b => b.classList.contains('hidden'));
+    fb.classList.toggle('hidden', allHidden);
+  });
+
+  searchCount.textContent = matches + (matches === 1 ? ' resultado encontrado' : ' resultados encontrados');
+});
+
+// ---------- Checklists with localStorage ----------
+function setupChecklist(listId, storageKey, onUpdate){
+  const list = document.getElementById(listId);
+  if(!list) return;
+  const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+  list.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    const k = cb.dataset.key;
+    if(saved[k]){ cb.checked = true; cb.closest('li').classList.add('checked'); }
+    cb.addEventListener('change', () => {
+      const state = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      state[k] = cb.checked;
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      cb.closest('li').classList.toggle('checked', cb.checked);
+      if(onUpdate) onUpdate();
+    });
+    cb.closest('li').addEventListener('click', (e) => {
+      if(e.target !== cb){ cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); }
+    });
+  });
+  if(onUpdate) onUpdate();
+}
+
+function updateProgress(){
+  const list = document.getElementById('ferias');
+  const boxes = list.querySelectorAll('input[type=checkbox]');
+  const checked = list.querySelectorAll('input[type=checkbox]:checked').length;
+  document.getElementById('progressLabel').textContent = checked + ' de ' + boxes.length + ' concluídos';
+  document.getElementById('progressBar').style.width = (checked / boxes.length * 100) + '%';
+}
+
+setupChecklist('ferias', 'manual_ferias_checklist', updateProgress);
+setupChecklist('pacoteFinal', 'manual_pacote_checklist');
+</script>
+</body>
+</html>
