@@ -153,12 +153,6 @@
   .hierarchy-list li::after{content:"→"; margin-left:6px; color:rgba(255,255,255,0.5);}
   .hierarchy-list li:last-child::after{content:"";}
 
-  .screenshot-box{
-    margin-top:14px; border:2px dashed #b9d6c9; border-radius:var(--radius);
-    padding:22px; text-align:center; color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.78rem;
-    background:var(--green-pale);
-  }
-
   /* ---------- Glossary ---------- */
   .glossary-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:12px;}
   .gterm{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);}
@@ -205,6 +199,30 @@
   .no-results{padding:40px; text-align:center; color:var(--ink-faint); font-family:'IBM Plex Mono';}
 
   footer{border-top:1px solid var(--line); margin-top:60px; padding-top:20px; color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.72rem;}
+
+  /* ---------- Quiz ---------- */
+  .quiz-opt{
+    display:flex; align-items:center; gap:12px; text-align:left; width:100%;
+    padding:13px 16px; border:1.5px solid var(--line); background:var(--card); border-radius:12px;
+    font-family:'Mulish'; font-weight:600; font-size:0.92rem; color:var(--ink); cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .quiz-opt:hover:not(:disabled){border-color:var(--green-light); background:var(--green-pale);}
+  .quiz-opt .letter{
+    width:26px; height:26px; border-radius:50%; background:var(--paper-2); color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono'; font-size:0.75rem; flex-shrink:0;
+  }
+  .quiz-opt:disabled{cursor:default;}
+  .quiz-opt.correct{border-color:var(--green); background:var(--green-pale);}
+  .quiz-opt.correct .letter{background:var(--green); color:#fff;}
+  .quiz-opt.wrong{border-color:var(--red); background:var(--red-pale);}
+  .quiz-opt.wrong .letter{background:var(--red); color:#fff;}
+
+  .quiz-explain{
+    padding:14px 16px; border-radius:12px; font-size:0.9rem; line-height:1.5;
+  }
+  .quiz-explain.ok{background:var(--green-pale); border:1px solid #cdeadd; color:var(--green-dark);}
+  .quiz-explain.no{background:var(--red-pale); border:1px solid #f0c3c5; color:var(--red-dark);}
 
   .backtotop{
     position:fixed; bottom:22px; right:22px; background:var(--green); color:#fff;
@@ -268,6 +286,7 @@
       <a href="#glossario"><span class="num">✎</span> Glossário</a>
       <a href="#faq"><span class="num">?</span> Perguntas frequentes</a>
       <a href="#checklist-ferias"><span class="num">✓</span> Checklist de saída</a>
+      <a href="#quiz"><span class="num">◆</span> Teste seus conhecimentos</a>
     </nav>
   </aside>
 
@@ -301,7 +320,6 @@
           <li><strong>SUMÁRIO</strong> — arquivo em Illustrator. Salve um PDF deste arquivo para inserir no InDesign do "BONECO".</li>
         </ul>
         <div class="callout info"><span class="ic">i</span> Salve também a planilha de dados (Excel) extraída na Fase 1 dentro desta estrutura, e copie o arquivo de capas de especialidades (.cdr e .pdf) — o layout deve seguir exatamente o padrão do último estado finalizado.</div>
-        <div class="screenshot-box">📷 Espaço para print: estrutura de pastas padrão <span class="code">_IMPRESSO</span></div>
       </div>
     </section>
 
@@ -317,7 +335,14 @@
           <li>Copie a lista gerada e cole em um Bloco de Notas simples, para remover formatações indesejadas.</li>
           <li>Acesse a <a href="https://share.gemini.google/hax6OMdznmjn" target="_blank" rel="noopener">conversa do Gemini dedicada à limpeza de dados</a> e cole a lista para extrair os dados úteis.</li>
           <li>Copie os dados limpos para uma planilha Excel e crie obrigatoriamente três colunas: <span class="code">CTO</span>, <span class="code">FIGURAÇÃO</span> e <span class="code">DATA DA VENDA</span>.</li>
+          <li>Crie uma coluna <span class="code">CATEGORIA</span> imediatamente à direita da coluna <span class="code">ESPECIALIDADE</span>, e classifique cada linha em um dos 5 tipos abaixo.</li>
         </ol>
+        <p><strong>As 5 categorias e como classificar:</strong></p>
+        <ul class="hierarchy-list" style="margin-bottom:4px;">
+          <li>Medicina</li><li>Exames Especializados</li><li>Odonto</li><li>Produtos e Serviços</li><li>Tratamentos Especiais</li>
+        </ul>
+        <div class="callout info"><span class="ic">i</span> <strong>Exemplos práticos:</strong> "Ortopedia e Traumatologia" → <strong>Medicina</strong>. "Ecocardiograma" → <strong>Exames Especializados</strong>. "Aparelhos Auditivos" → <strong>Produtos e Serviços</strong>.</div>
+        <div class="callout"><span class="ic">★</span> Na dúvida sobre qual categoria uma especialidade nova se encaixa, siga a lógica: consultas e especialidades médicas tradicionais → Medicina; exames diagnósticos/laboratoriais → Exames Especializados; procedimentos e clínicas odontológicas → Odonto; equipamentos, aparelhos e serviços não-clínicos → Produtos e Serviços; procedimentos estéticos, terapias e afins → Tratamentos Especiais. Em caso de dúvida real, confirme com a Editoração antes de seguir.</div>
       </div>
 
       <div class="subsection">
@@ -337,6 +362,9 @@
           <li>Desenhe os retângulos de marcação no arquivo InDesign (pasta <span class="code">BONECO</span>) conforme os tamanhos contratados.</li>
           <li>Este desenho prévio serve como mapa para o fluxo de inserção de conteúdo, garantindo que nenhum contrato fique de fora.</li>
         </ol>
+        <div class="callout danger"><span class="ic">!</span> <strong>Antes de desenhar os espaços, é essencial já saber a regra de ordenação de cada caderno</strong> — desenhar na ordem errada obriga a refazer o boneco depois. Resumo rápido:</div>
+        <p><strong>Caderno Preto e Branco (miolo PB)</strong> — segue hierarquia de tamanho até o 2QCOL (1/2 pág → 1/4 pág → 2MCOL → 2QCOL). A partir do Bloco CL (8CL, 6CL, 4CL, 3CL), <strong>não há mais hierarquia de tamanho</strong>: todos os CL entram misturados entre si e junto com as gratuidades, só em ordem alfabética pelo nome do anúncio. Veja o passo a passo completo e o exemplo prático na <a href="#fase2">Fase 02</a>.</p>
+        <p><strong>Caderno Colorido</strong> — <strong>não segue ordem alfabética</strong>. A regra mestra é a Data da Venda (contratos mais antigos primeiro), respeitando uma ordem fixa de blocos: Editorial → Associação → Figurações espelhadas → demais páginas coloridas. Veja o passo a passo completo na <a href="#fase3">Fase 03</a>.</p>
       </div>
 
       <div class="subsection magenta">
@@ -369,23 +397,28 @@
 
       <div class="subsection">
         <h3>2.2 — Preparação da diagramação (filtros)</h3>
+        <p>Siga os filtros nesta ordem exata:</p>
+        <ol>
+          <li>Filtre a planilha por <strong>uma especialidade específica</strong> por vez (ex.: "Acupuntura").</li>
+          <li>Dentro dessa especialidade, filtre os nomes dos clientes em <strong>ordem alfabética</strong>.</li>
+          <li>Em seguida, filtre pelas figurações em padrão <strong>Preto e Branco (PB)</strong>: 1/2 pág, 1/4 pág, 2MCOL, 2QCOL, 8CL, 6CL, 4CL e 3CL.</li>
+        </ol>
         <ul>
-          <li>Filtre a planilha por <strong>Especialidade</strong>, em ordem alfabética.</li>
-          <li>Filtre pelas figurações em padrão <strong>Preto e Branco (PB)</strong>: 1/2 pág, 1/4 pág, 2MCOL, 2QCOL, 8CL, 6CL, 4CL e 3CL.</li>
           <li><strong>Prioridade geográfica:</strong> se o estado tiver mais de uma cidade, inicie sempre pela capital e depois siga para as demais.</li>
-          <li>Se não houver figurações compradas para uma especialidade, deixe o espaço limpo — nunca force a criação de espaços sem contrato.</li>
+          <li>Se não houver mais figurações compradas para uma especialidade e sobrar espaço, deixe-o limpo — <strong>nunca force a criação de espaços sem contrato</strong>, pois esses espaços em branco serão preenchidos futuramente com os calhais (ver <a href="#fase7">Fase 07</a>).</li>
         </ul>
       </div>
 
       <div class="subsection">
         <h3>2.3 — Regras de ouro para inserção</h3>
-        <p><strong>Hierarquia de tamanho</strong> — a inserção deve seguir sempre esta ordem de dimensão:</p>
+        <p><strong>Hierarquia de blocos</strong> — a inserção segue esta ordem de dimensão até o 2QCOL:</p>
         <ul class="hierarchy-list">
-          <li><span class="rank">1</span> 1/2 pág PB</li><li><span class="rank">2</span> 1/4 pág PB</li><li><span class="rank">3</span> 2MCOL</li><li><span class="rank">4</span> 2QCOL</li><li><span class="rank">5</span> 8CL</li><li><span class="rank">6</span> 6CL</li><li><span class="rank">7</span> 4CL</li><li><span class="rank">8</span> 3CL</li>
+          <li><span class="rank">1</span> 1/2 pág PB</li><li><span class="rank">2</span> 1/4 pág PB</li><li><span class="rank">3</span> 2MCOL</li><li><span class="rank">4</span> 2QCOL</li><li><span class="rank">5</span> Bloco CL + Gratuidades</li>
         </ul>
-        <p><strong>Critério de ordenação alfabética</strong> — dentro de cada bloco de figuração, os clientes entram em ordem alfabética.</p>
+        <div class="callout danger"><span class="ic">!</span> <strong>Atenção — dentro do Bloco CL não existe hierarquia de tamanho.</strong> 8CL, 6CL, 4CL e 3CL entram misturados entre si (e junto com as gratuidades, se houver), <strong>só na ordem alfabética</strong> — o tamanho da figuração não importa nessa etapa.</div>
+        <p><strong>Critério de ordenação alfabética</strong> — dentro de cada bloco, os clientes entram em ordem alfabética. No Bloco CL, isso vale misturando todos os tamanhos (8CL/6CL/4CL/3CL) e as gratuidades na mesma sequência.</p>
+        <div class="callout info"><span class="ic">i</span> <strong>Exemplo prático:</strong> numa mesma cidade, João tem um 4CL, Maria tem um 8CL e Ana tem uma gratuidade. A ordem de inserção é: <strong>Ana</strong> (gratuidade) → <strong>João</strong> (4CL) → <strong>Maria</strong> (8CL) — porque A vem antes de J, que vem antes de M no alfabeto. O tamanho da figuração de cada um não influencia a posição.</div>
         <div class="callout"><span class="ic">★</span> Use sempre o nome que consta no <strong>título do anúncio online</strong> para ordenar — nunca o nome jurídico do contrato. Exemplo: contrato em nome de "Maria José", mas o anúncio online é "José" → ordene pela letra <strong>J</strong>.</div>
-        <div class="screenshot-box">📷 Espaço para print: hierarquia de figurações aplicada no InDesign</div>
       </div>
     </section>
 
@@ -435,7 +468,6 @@
           <li><strong>Conferência de precisão (crucial):</strong> abra o arquivo do hotstamping e o da capa final. Use <span class="code">Ctrl+C</span> (copiar a logo da capa) e <span class="code">Ctrl+F</span> (colar no mesmo lugar) sobre a logo do hotstamping.</li>
         </ol>
         <div class="callout danger"><span class="ic">!</span> Verifique se as duas logos ficam perfeitamente sobrepostas (mesma posição e escala). Qualquer desalinhamento deve ser ajustado imediatamente.</div>
-        <div class="screenshot-box">📷 Espaço para print: conferência Ctrl+C / Ctrl+F da logo sobre o hotstamping</div>
       </div>
 
       <div class="subsection">
@@ -534,7 +566,9 @@
           <li><strong>Revisão do setor de Editoração:</strong> entregue o material físico para conferência.</li>
           <li>O setor verifica <strong>erros ortográficos</strong> (revisão de texto em todas as páginas) e <strong>posicionamento</strong> (alinhamento e margens de segurança).</li>
           <li><strong>Ajustes:</strong> se houver erros, corrija no InDesign, gere um novo PDF e, se necessário, imprima nova prova para aprovação final.</li>
+          <li><strong>Envio para aprovação final:</strong> depois das correções finalizadas, exporte os arquivos — <span class="code">Colorido</span>, <span class="code">Boneco</span> e <span class="code">Capa</span> — e junte tudo em um único PDF usando um agrupador de PDF.</li>
         </ol>
+        <div class="callout danger"><span class="ic">!</span> Envie o guia completo agrupado no grupo de WhatsApp <strong>"fechamento guia impresso"</strong> para aprovação final de <strong>Carol, Adriano, Rayanne e Raíza</strong>. Só siga para a exportação definitiva (Fase 10) depois de todos aprovarem.</div>
       </div>
     </section>
 
@@ -584,7 +618,7 @@
       <p class="fase-desc">Termos técnicos usados no dia a dia da produção. Clique em um termo para ver a definição.</p>
       <div class="glossary-grid" id="glossaryGrid">
         <details class="gterm"><summary>BONECO<span></span></summary><div class="gdef">Arquivo principal do InDesign que recebe as artes das especialidades e serve de mapa/estrutura para toda a diagramação do miolo.</div></details>
-        <details class="gterm"><summary>GABARITO<span></span></summary><div class="gdef">Planilha Excel oficial, preenchida com CTO, Figuração e Data da Venda de cada cliente, que guia toda a montagem da edição.</div></details>
+        <details class="gterm"><summary>LISTA UNIFICADA<span></span></summary><div class="gdef">Planilha Excel oficial, preenchida com CTO, Figuração e Data da Venda de cada cliente, que guia toda a montagem da edição.</div></details>
         <details class="gterm"><summary>CTO<span></span></summary><div class="gdef">Coluna de controle contratual preenchida na conferência de cada contrato (Fase 1.2), usada no Gabarito.</div></details>
         <details class="gterm"><summary>FIGURAÇÃO<span></span></summary><div class="gdef">Tamanho/formato do anúncio contratado pelo cliente (ex.: 1/2 pág, 8CL, 2QCOL). Define o espaço a ser reservado na diagramação.</div></details>
         <details class="gterm"><summary>8CL / 6CL / 4CL / 3CL<span></span></summary><div class="gdef">Módulos de figuração em coluna, do maior (8CL) ao menor (3CL), usados no miolo Preto e Branco.</div></details>
@@ -646,6 +680,42 @@
       </ul>
     </section>
 
+    <!-- QUIZ -->
+    <section class="fase-block" id="quiz">
+      <div class="fase-head"><span class="fnum mono" style="font-size:1.8rem;">◆</span><h2>Teste seus conhecimentos</h2></div>
+      <p class="fase-desc">Quiz com 12 perguntas sobre o processo completo. Ao errar, a explicação detalhada aparece na hora. No final, seu nome e sua nota ficam registrados para consulta.</p>
+
+      <div class="subsection" id="quizBox">
+        <div id="quizLoading" style="text-align:center; padding:20px; color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.85rem;">Carregando perguntas…</div>
+
+        <div id="quizStart" class="hidden">
+          <p style="margin-top:0;">Antes de começar, digite seu nome — ele será salvo junto com sua nota ao final do teste.</p>
+          <input type="text" id="quizNome" placeholder="Seu nome completo" style="width:100%; max-width:360px; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Mulish'; font-size:0.95rem; margin-bottom:14px;">
+          <br>
+          <button id="quizStartBtn" style="background:var(--green); color:#fff; border:none; padding:12px 26px; border-radius:999px; font-family:'Fredoka'; font-weight:600; font-size:0.95rem; cursor:pointer;">Começar teste</button>
+        </div>
+
+        <div id="quizPlay" class="hidden">
+          <div class="progress-label" id="quizProgressLabel">Pergunta 1 de 12</div>
+          <div class="progress-wrap"><div class="progress-bar" id="quizProgressBar" style="width:0%;"></div></div>
+          <h3 id="quizQuestionText" style="margin-top:18px; font-size:1.1rem;"></h3>
+          <div id="quizOptions" style="display:flex; flex-direction:column; gap:10px; margin-top:14px;"></div>
+          <div id="quizFeedback" class="hidden" style="margin-top:14px;"></div>
+          <button id="quizNextBtn" class="hidden" style="background:var(--green); color:#fff; border:none; padding:11px 24px; border-radius:999px; font-family:'Fredoka'; font-weight:600; font-size:0.9rem; cursor:pointer; margin-top:14px;">Próxima pergunta →</button>
+        </div>
+
+        <div id="quizResult" class="hidden" style="text-align:center; padding:20px 10px;">
+          <div style="font-family:'Fredoka'; font-size:2.4rem; color:var(--green); font-weight:600;" id="quizScoreText"></div>
+          <p id="quizScoreMsg" style="color:var(--ink-soft); margin-top:6px;"></p>
+          <div id="quizSaveStatus" style="margin-top:16px; font-family:'IBM Plex Mono'; font-size:0.8rem; color:var(--ink-faint);"></div>
+        </div>
+
+        <div id="quizError" class="hidden callout danger" style="margin-top:14px;">
+          <span class="ic">!</span> Não foi possível carregar o quiz. Verifique se as chaves do Supabase foram configuradas corretamente no arquivo.
+        </div>
+      </div>
+    </section>
+
     <footer>
       Manual interativo gerado a partir do processo interno de diagramação · guarde este arquivo em local acessível durante o período de cobertura.
     </footer>
@@ -653,6 +723,20 @@
 </div>
 
 <a href="#intro" class="backtotop" title="Voltar ao topo">↑</a>
+
+<script type="module">
+  // ============================================================
+  // CONFIGURAÇÃO DO SUPABASE — cole suas chaves aqui
+  // Onde encontrar: Supabase → Project Settings → API
+  // ============================================================
+  const SUPABASE_URL = 'https://ajcvtlfldkarptcvinzk.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqY3Z0bGZsZGthcnB0Y3ZpbnprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMzc4NjYsImV4cCI6MjEwMDcxMzg2Nn0.h2dX9Mqz7Wih9fnXuMLNc8cTCU_RhIZAeKDSsnV3sQU';
+
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__supabase = supabase;
+  window.dispatchEvent(new Event('supabaseReady'));
+</script>
 
 <script>
 // ---------- Mobile menu ----------
@@ -763,6 +847,119 @@ function updateProgress(){
 
 setupChecklist('ferias', 'manual_ferias_checklist', updateProgress);
 setupChecklist('pacoteFinal', 'manual_pacote_checklist');
+
+// ---------- Quiz ----------
+function initQuiz(){
+  const supabase = window.__supabase;
+  const els = {
+    loading: document.getElementById('quizLoading'),
+    start: document.getElementById('quizStart'),
+    play: document.getElementById('quizPlay'),
+    result: document.getElementById('quizResult'),
+    error: document.getElementById('quizError'),
+    nome: document.getElementById('quizNome'),
+    startBtn: document.getElementById('quizStartBtn'),
+    progressLabel: document.getElementById('quizProgressLabel'),
+    progressBar: document.getElementById('quizProgressBar'),
+    questionText: document.getElementById('quizQuestionText'),
+    options: document.getElementById('quizOptions'),
+    feedback: document.getElementById('quizFeedback'),
+    nextBtn: document.getElementById('quizNextBtn'),
+    scoreText: document.getElementById('quizScoreText'),
+    scoreMsg: document.getElementById('quizScoreMsg'),
+    saveStatus: document.getElementById('quizSaveStatus'),
+  };
+
+  let questions = [];
+  let idx = 0;
+  let score = 0;
+  let nome = '';
+
+  supabase.from('questoes').select('*').order('ordem', { ascending: true })
+    .then(({ data, error }) => {
+      if(error || !data || data.length === 0){ throw error || new Error('sem perguntas'); }
+      questions = data;
+      els.loading.classList.add('hidden');
+      els.start.classList.remove('hidden');
+    })
+    .catch(() => {
+      els.loading.classList.add('hidden');
+      els.error.classList.remove('hidden');
+    });
+
+  els.startBtn.addEventListener('click', () => {
+    nome = els.nome.value.trim();
+    if(!nome){ els.nome.style.borderColor = 'var(--red)'; els.nome.focus(); return; }
+    els.start.classList.add('hidden');
+    els.play.classList.remove('hidden');
+    idx = 0; score = 0;
+    renderQuestion();
+  });
+
+  function renderQuestion(){
+    const q = questions[idx];
+    els.progressLabel.textContent = 'Pergunta ' + (idx+1) + ' de ' + questions.length;
+    els.progressBar.style.width = (idx / questions.length * 100) + '%';
+    els.questionText.textContent = q.pergunta;
+    els.feedback.classList.add('hidden');
+    els.nextBtn.classList.add('hidden');
+    els.options.innerHTML = '';
+
+    ['a','b','c','d'].forEach(letter => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.innerHTML = '<span class="letter">' + letter.toUpperCase() + '</span><span>' + q['opcao_' + letter] + '</span>';
+      btn.addEventListener('click', () => answer(letter, btn, q));
+      els.options.appendChild(btn);
+    });
+  }
+
+  function answer(letter, btn, q){
+    const allBtns = els.options.querySelectorAll('.quiz-opt');
+    allBtns.forEach(b => b.disabled = true);
+    const isCorrect = letter === q.resposta_correta;
+    if(isCorrect) score++;
+    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    if(!isCorrect){
+      const correctBtn = allBtns[q.resposta_correta.charCodeAt(0) - 97];
+      correctBtn.classList.add('correct');
+    }
+    els.feedback.className = 'quiz-explain ' + (isCorrect ? 'ok' : 'no');
+    els.feedback.innerHTML = '<strong>' + (isCorrect ? 'Certo! ' : 'Não foi dessa vez. ') + '</strong>' + q.explicacao;
+    els.feedback.classList.remove('hidden');
+    els.nextBtn.classList.remove('hidden');
+    els.nextBtn.textContent = (idx === questions.length - 1) ? 'Ver resultado final →' : 'Próxima pergunta →';
+  }
+
+  els.nextBtn.addEventListener('click', () => {
+    idx++;
+    if(idx < questions.length){
+      renderQuestion();
+    } else {
+      finish();
+    }
+  });
+
+  function finish(){
+    els.play.classList.add('hidden');
+    els.progressBar.style.width = '100%';
+    els.result.classList.remove('hidden');
+    els.scoreText.textContent = score + ' / ' + questions.length;
+    const pct = score / questions.length;
+    els.scoreMsg.textContent = pct === 1 ? 'Perfeito! Domínio total do processo. 🎉'
+      : pct >= 0.75 ? 'Muito bom! Só reforçar os pontos que errou.'
+      : pct >= 0.5 ? 'Bom começo — vale revisar as fases com mais atenção antes de assumir sozinho(a).'
+      : 'Recomendado revisar o manual com calma antes de seguir sem supervisão.';
+
+    els.saveStatus.textContent = 'Salvando resultado…';
+    supabase.from('resultados').insert({ nome: nome, pontuacao: score, total_questoes: questions.length })
+      .then(({ error }) => {
+        els.saveStatus.textContent = error ? '⚠ Não foi possível salvar o resultado.' : '✓ Resultado salvo como "' + nome + '".';
+      });
+  }
+}
+
+if(window.__supabase){ initQuiz(); } else { window.addEventListener('supabaseReady', initQuiz); }
 </script>
 </body>
 </html>
