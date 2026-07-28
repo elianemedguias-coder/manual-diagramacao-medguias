@@ -230,6 +230,41 @@
     text-decoration:none; font-size:1.2rem; box-shadow:var(--shadow); z-index:30; border:2px solid #fff;
   }
 
+  /* ---------- Auth gate ---------- */
+  #authGate{
+    position:fixed; inset:0; z-index:100; background:var(--paper);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  #authGate.hidden{display:none;}
+  .auth-card{
+    width:100%; max-width:380px; background:var(--card); border:1px solid var(--line);
+    border-radius:20px; padding:36px 32px; box-shadow:var(--shadow); text-align:center;
+  }
+  .auth-card .brandmark{width:38px; height:38px; border-radius:10px; margin-bottom:14px;}
+  .auth-card h2{font-size:1.3rem; margin-bottom:6px;}
+  .auth-card p.sub{color:var(--ink-soft); font-size:0.88rem; margin-bottom:22px;}
+  .auth-field{text-align:left; margin-bottom:14px;}
+  .auth-field label{display:block; font-family:'IBM Plex Mono'; font-size:0.68rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px;}
+  .auth-field input{
+    width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px;
+    font-family:'Mulish'; font-size:0.95rem; color:var(--ink);
+  }
+  .auth-field input:focus{outline:none; border-color:var(--green);}
+  .auth-btn{
+    width:100%; background:var(--green); color:#fff; border:none; padding:12px 20px;
+    border-radius:999px; font-family:'Fredoka'; font-weight:600; font-size:0.95rem; cursor:pointer; margin-top:6px;
+  }
+  .auth-btn:disabled{opacity:0.6; cursor:default;}
+  .auth-link{background:none; border:none; color:var(--green-dark); font-family:'Mulish'; font-weight:700; font-size:0.82rem; cursor:pointer; margin-top:14px; text-decoration:underline;}
+  .auth-msg{font-size:0.85rem; margin-top:14px; padding:10px 12px; border-radius:10px;}
+  .auth-msg.err{background:var(--red-pale); color:var(--red-dark);}
+  .auth-msg.ok{background:var(--green-pale); color:var(--green-dark);}
+  #authLoading{color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.85rem;}
+  .logout-btn{
+    background:var(--paper-2); border:1px solid var(--line); color:var(--ink-soft);
+    font-family:'Mulish'; font-weight:700; font-size:0.72rem; padding:7px 12px; border-radius:999px; cursor:pointer;
+  }
+
   @media (max-width:900px){
     .menu-btn{display:inline-block;}
     aside.sidebar{
@@ -246,6 +281,32 @@
 </head>
 <body>
 
+<!-- AUTH GATE -->
+<div id="authGate">
+  <div class="auth-card">
+    <span class="brandmark" style="display:inline-block;"></span>
+    <div id="authLoading">Verificando acesso…</div>
+
+    <div id="authLoginBox" class="hidden">
+      <h2>Acesso restrito</h2>
+      <p class="sub">Manual interno · MedGuias<br>Entre com o e-mail que você recebeu o convite.</p>
+      <div class="auth-field"><label>E-mail</label><input type="email" id="authEmail" autocomplete="username"></div>
+      <div class="auth-field"><label>Senha</label><input type="password" id="authPassword" autocomplete="current-password"></div>
+      <button class="auth-btn" id="authLoginBtn">Entrar</button>
+      <div id="authMsg" class="hidden"></div>
+      <button class="auth-link" id="authForgotBtn">Esqueci minha senha</button>
+    </div>
+
+    <div id="authSetPasswordBox" class="hidden">
+      <h2>Defina sua senha</h2>
+      <p class="sub">Primeiro acesso ou redefinição — crie uma senha para entrar nas próximas vezes.</p>
+      <div class="auth-field"><label>Nova senha</label><input type="password" id="authNewPassword" autocomplete="new-password"></div>
+      <button class="auth-btn" id="authSetPasswordBtn">Salvar senha e entrar</button>
+      <div id="authSetMsg" class="hidden"></div>
+    </div>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="brandline">
     <span class="brandmark"></span>
@@ -254,7 +315,11 @@
       <div class="sub">DIAGRAMAÇÃO · GUIA MÉDICO IMPRESSO · MEDGUIAS</div>
     </div>
   </div>
-  <button class="menu-btn" id="menuBtn">MENU ☰</button>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <span id="authUserLabel" class="mono" style="font-size:0.72rem; color:var(--ink-faint);"></span>
+    <button class="logout-btn hidden" id="logoutBtn">Sair</button>
+    <button class="menu-btn" id="menuBtn">MENU ☰</button>
+  </div>
 </div>
 
 <div class="shell">
@@ -689,9 +754,7 @@
         <div id="quizLoading" style="text-align:center; padding:20px; color:var(--ink-faint); font-family:'IBM Plex Mono'; font-size:0.85rem;">Carregando perguntas…</div>
 
         <div id="quizStart" class="hidden">
-          <p style="margin-top:0;">Antes de começar, digite seu nome — ele será salvo junto com sua nota ao final do teste.</p>
-          <input type="text" id="quizNome" placeholder="Seu nome completo" style="width:100%; max-width:360px; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Mulish'; font-size:0.95rem; margin-bottom:14px;">
-          <br>
+          <p style="margin-top:0;">Pronto(a) para começar? Sua nota será salva vinculada ao e-mail <strong id="quizEmailPreview"></strong>.</p>
           <button id="quizStartBtn" style="background:var(--green); color:#fff; border:none; padding:12px 26px; border-radius:999px; font-family:'Fredoka'; font-weight:600; font-size:0.95rem; cursor:pointer;">Começar teste</button>
         </div>
 
@@ -849,7 +912,7 @@ setupChecklist('ferias', 'manual_ferias_checklist', updateProgress);
 setupChecklist('pacoteFinal', 'manual_pacote_checklist');
 
 // ---------- Quiz ----------
-function initQuiz(){
+function initQuiz(userEmail){
   const supabase = window.__supabase;
   const els = {
     loading: document.getElementById('quizLoading'),
@@ -857,7 +920,7 @@ function initQuiz(){
     play: document.getElementById('quizPlay'),
     result: document.getElementById('quizResult'),
     error: document.getElementById('quizError'),
-    nome: document.getElementById('quizNome'),
+    emailPreview: document.getElementById('quizEmailPreview'),
     startBtn: document.getElementById('quizStartBtn'),
     progressLabel: document.getElementById('quizProgressLabel'),
     progressBar: document.getElementById('quizProgressBar'),
@@ -873,7 +936,7 @@ function initQuiz(){
   let questions = [];
   let idx = 0;
   let score = 0;
-  let nome = '';
+  els.emailPreview.textContent = userEmail;
 
   supabase.from('questoes').select('*').order('ordem', { ascending: true })
     .then(({ data, error }) => {
@@ -888,8 +951,6 @@ function initQuiz(){
     });
 
   els.startBtn.addEventListener('click', () => {
-    nome = els.nome.value.trim();
-    if(!nome){ els.nome.style.borderColor = 'var(--red)'; els.nome.focus(); return; }
     els.start.classList.add('hidden');
     els.play.classList.remove('hidden');
     idx = 0; score = 0;
@@ -952,14 +1013,127 @@ function initQuiz(){
       : 'Recomendado revisar o manual com calma antes de seguir sem supervisão.';
 
     els.saveStatus.textContent = 'Salvando resultado…';
-    supabase.from('resultados').insert({ nome: nome, pontuacao: score, total_questoes: questions.length })
+    supabase.from('resultados').insert({ email: userEmail, pontuacao: score, total_questoes: questions.length })
       .then(({ error }) => {
-        els.saveStatus.textContent = error ? '⚠ Não foi possível salvar o resultado.' : '✓ Resultado salvo como "' + nome + '".';
+        els.saveStatus.textContent = error ? '⚠ Não foi possível salvar o resultado.' : '✓ Resultado salvo como "' + userEmail + '".';
       });
   }
 }
 
-if(window.__supabase){ initQuiz(); } else { window.addEventListener('supabaseReady', initQuiz); }
+// ---------- Autenticação ----------
+function initAuth(){
+  const supabase = window.__supabase;
+  const hash = window.location.hash || '';
+  const isInviteOrRecovery = hash.includes('type=invite') || hash.includes('type=recovery');
+
+  const gate = document.getElementById('authGate');
+  const loading = document.getElementById('authLoading');
+  const loginBox = document.getElementById('authLoginBox');
+  const setPwBox = document.getElementById('authSetPasswordBox');
+  const shell = document.querySelector('.shell');
+  const userLabel = document.getElementById('authUserLabel');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function showOnly(el){
+    [loading, loginBox, setPwBox].forEach(x => x.classList.add('hidden'));
+    el.classList.remove('hidden');
+  }
+
+  function showLogin(msg){
+    gate.classList.remove('hidden');
+    shell.style.display = 'none';
+    logoutBtn.classList.add('hidden');
+    userLabel.textContent = '';
+    showOnly(loginBox);
+    const m = document.getElementById('authMsg');
+    if(msg){ m.textContent = msg; m.className = 'auth-msg err'; m.classList.remove('hidden'); }
+    else { m.classList.add('hidden'); }
+  }
+
+  function showSetPassword(){
+    gate.classList.remove('hidden');
+    shell.style.display = 'none';
+    showOnly(setPwBox);
+  }
+
+  function enterApp(session){
+    gate.classList.add('hidden');
+    shell.style.display = 'flex';
+    userLabel.textContent = session.user.email;
+    logoutBtn.classList.remove('hidden');
+    if(!window.__quizInitDone){
+      window.__quizInitDone = true;
+      initQuiz(session.user.email);
+    }
+  }
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if(event === 'PASSWORD_RECOVERY'){
+      showSetPassword();
+    } else if(event === 'SIGNED_IN' && isInviteOrRecovery){
+      showSetPassword();
+    } else if(event === 'SIGNED_IN' && session){
+      enterApp(session);
+    } else if(event === 'SIGNED_OUT'){
+      showLogin();
+    }
+  });
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if(session && !isInviteOrRecovery){
+      enterApp(session);
+    } else if(!isInviteOrRecovery){
+      showLogin();
+    }
+    // se for invite/recovery, aguarda o evento onAuthStateChange acima processar o link
+  });
+
+  document.getElementById('authLoginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const btn = document.getElementById('authLoginBtn');
+    const m = document.getElementById('authMsg');
+    if(!email || !password){ m.textContent = 'Preencha e-mail e senha.'; m.className = 'auth-msg err'; m.classList.remove('hidden'); return; }
+    btn.disabled = true; btn.textContent = 'Entrando…';
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    btn.disabled = false; btn.textContent = 'Entrar';
+    if(error){
+      m.textContent = 'E-mail ou senha incorretos.';
+      m.className = 'auth-msg err'; m.classList.remove('hidden');
+    }
+  });
+
+  document.getElementById('authForgotBtn').addEventListener('click', async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    const m = document.getElementById('authMsg');
+    if(!email){ m.textContent = 'Digite seu e-mail acima primeiro.'; m.className = 'auth-msg err'; m.classList.remove('hidden'); return; }
+    await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+    m.textContent = 'Se esse e-mail estiver cadastrado, um link de redefinição foi enviado.';
+    m.className = 'auth-msg ok'; m.classList.remove('hidden');
+  });
+
+  document.getElementById('authSetPasswordBtn').addEventListener('click', async () => {
+    const pw = document.getElementById('authNewPassword').value;
+    const btn = document.getElementById('authSetPasswordBtn');
+    const m = document.getElementById('authSetMsg');
+    if(!pw || pw.length < 6){ m.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; m.className = 'auth-msg err'; m.classList.remove('hidden'); return; }
+    btn.disabled = true; btn.textContent = 'Salvando…';
+    const { data, error } = await supabase.auth.updateUser({ password: pw });
+    btn.disabled = false; btn.textContent = 'Salvar senha e entrar';
+    if(error){
+      m.textContent = 'Não foi possível salvar. Tente novamente.';
+      m.className = 'auth-msg err'; m.classList.remove('hidden');
+      return;
+    }
+    history.replaceState(null, '', window.location.pathname);
+    const { data: { session } } = await supabase.auth.getSession();
+    if(session) enterApp(session);
+  });
+
+  logoutBtn.addEventListener('click', () => supabase.auth.signOut());
+}
+
+if(window.__supabase){ initAuth(); } else { window.addEventListener('supabaseReady', initAuth); }
 </script>
 </body>
 </html>
